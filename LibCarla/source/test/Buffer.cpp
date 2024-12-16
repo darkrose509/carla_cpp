@@ -10,21 +10,24 @@
 
 #include <climits>
 #include <random>
-// ¶¨ÒåÃüÃû¿Õ¼ä util£¬ÆäÖĞ°üº¬×ÓÃüÃû¿Õ¼ä buffer
+// å®šä¹‰å‘½åç©ºé—´ utilï¼Œå…¶ä¸­åŒ…å«å­å‘½åç©ºé—´ buffer
 namespace util {
 namespace buffer {
-// Éú³ÉÖ¸¶¨´óĞ¡µÄËæ»ú»º³åÇø
+// ç”ŸæˆæŒ‡å®šå¤§å°çš„éšæœºç¼“å†²åŒº
+//å®šä¹‰äº†ä¸€ä¸ªåä¸ºbufferçš„å‘½åç©ºé—´ï¼Œè¿™æ„å‘³ç€make_randomå‡½æ•°å’Œç›¸å…³çš„ç±»å‹å®šä¹‰éƒ½åœ¨è¿™ä¸ªå‘½åç©ºé—´ä¸‹ã€‚
   shared_buffer make_random(size_t size) {
-  	// Èç¹û´«ÈëµÄ´óĞ¡Îª 0£¬Ôò·µ»ØÒ»¸ö¿ÕµÄ»º³åÇø
+  	// å¦‚æœä¼ å…¥çš„å¤§å°ä¸º 0ï¼Œåˆ™è¿”å›ä¸€ä¸ªç©ºçš„ç¼“å†²åŒº
     if (size == 0u)
       return make_empty();
-        // Ê¹ÓÃ boost::random::independent_bits_engine ºÍ std::random_device Éú³ÉËæ»ú×Ö½ÚĞòÁĞ
-        // independent_bits_engine ÊÇÒ»¸öËæ»úÊıÒıÇæ£¬ËüÊ¹ÓÃ std::random_device ×÷Îª»ù´¡Ëæ»úÔ´
-        // Éú³ÉÖ¸¶¨Î»Êı£¨ÕâÀïÊÇ CHAR_BIT£¬Í¨³£ÊÇ 8 Î»£©µÄ¶ÀÁ¢Ëæ»úÎ»£¬²¢²úÉúÎŞ·ûºÅ×Ö·ûÀàĞÍµÄËæ»úÊı
+        // ä½¿ç”¨ boost::random::independent_bits_engine å’Œ std::random_device ç”Ÿæˆéšæœºå­—èŠ‚åºåˆ—
+        // independent_bits_engine æ˜¯ä¸€ä¸ªéšæœºæ•°å¼•æ“ï¼Œå®ƒä½¿ç”¨ std::random_device ä½œä¸ºåŸºç¡€éšæœºæº
+        // ç”ŸæˆæŒ‡å®šä½æ•°ï¼ˆè¿™é‡Œæ˜¯ CHAR_BITï¼Œé€šå¸¸æ˜¯ 8 ä½ï¼‰çš„ç‹¬ç«‹éšæœºä½ï¼Œå¹¶äº§ç”Ÿæ— ç¬¦å·å­—ç¬¦ç±»å‹çš„éšæœºæ•°
     using random_bytes_engine = boost::random::independent_bits_engine<
+    //å®šä¹‰äº†ä¸€ä¸ªéšæœºæ•°å¼•æ“ç±»å‹ï¼Œå®ƒåŸºäºBooståº“ä¸­çš„independent_bits_engineæ¨¡æ¿
         std::random_device,
         CHAR_BIT,
         unsigned char>;
+    //è¿™ä¸ªå¼•æ“ä½¿ç”¨std::random_deviceä½œä¸ºåŸºç¡€éšæœºæºï¼Œç”Ÿæˆç‹¬ç«‹éšæœºä½ï¼Œå¹¶äº§ç”Ÿunsigned charç±»å‹çš„éšæœºæ•°
     random_bytes_engine rbe;
     auto buffer = make_empty(size);
     std::generate(buffer->begin(), buffer->end(), std::ref(rbe));
@@ -33,8 +36,8 @@ namespace buffer {
 
   std::string to_hex_string(const Buffer &buf, size_t length) {
     length = std::min(static_cast<size_t>(buf.size()), length);
-        // ´´½¨Ò»¸ö×ã¹»´óµÄ×Ö·ûÊı×éÀ´´æ´¢Ê®Áù½øÖÆ×Ö·û´®
-        // ³¤¶ÈÎª 2u * length + 1u£¬ÒòÎªÃ¿¸ö×Ö½ÚĞèÒªÓÃÁ½¸öÊ®Áù½øÖÆÊı×Ö±íÊ¾£¬ÔÙ¼ÓÉÏÒ»¸ö×Ö·û´®½áÊø·û
+        // åˆ›å»ºä¸€ä¸ªè¶³å¤Ÿå¤§çš„å­—ç¬¦æ•°ç»„æ¥å­˜å‚¨åå…­è¿›åˆ¶å­—ç¬¦ä¸²
+        // é•¿åº¦ä¸º 2u * length + 1uï¼Œå› ä¸ºæ¯ä¸ªå­—èŠ‚éœ€è¦ç”¨ä¸¤ä¸ªåå…­è¿›åˆ¶æ•°å­—è¡¨ç¤ºï¼Œå†åŠ ä¸Šä¸€ä¸ªå­—ç¬¦ä¸²ç»“æŸç¬¦
     auto buffer = std::make_unique<char[]>(2u * length + 1u);
     for (auto i = 0u; i < length; ++i)
       sprintf(&buffer[2u * i], "%02x", buf.data()[i]);
